@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-surface text-textMain antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+/* Conservamos la estética base para inputs y tablas, 
+   para no perder la legibilidad en componentes nativos */
+@layer components {
+  .form-input {
+    @apply w-full px-3 py-2 bg-white border border-borderC rounded-md text-sm outline-none transition-colors;
+  }
+  .form-input:focus {
+    @apply border-accent shadow-sm;
+  }
+  
+  .btn-primary {
+    @apply px-4 py-2 bg-accent text-white font-medium rounded-lg hover:bg-opacity-90 transition-all text-sm;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 bg-slate-200 text-textMain font-medium rounded-lg hover:bg-slate-300 transition-all text-sm;
+  }
+  
+  .icon-btn {
+    @apply p-1.5 text-textLight hover:text-accent hover:bg-slate-100 rounded-md transition-colors;
+  }
+  .icon-btn.danger {
+    @apply hover:text-red-500 hover:bg-red-50;
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "microerp/backend",
+  "description": "API PHP con arquitectura limpia para ERP ligero.",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "MicroErp\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=8.1"
+  }
+}
