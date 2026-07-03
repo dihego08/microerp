@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://apipos.dbusinessaqp.com/api',//'http://localhost:8080/POS/backend/public/api',
+  baseURL: /*'https://apipos.dbusinessaqp.com/api',//*/'http://localhost:8080/POS/backend/public/api',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'

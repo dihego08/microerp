@@ -1,19 +1,37 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../services/api';
-import { X, Save, Loader2 } from 'lucide-react';
+import { X, Save, Loader2, Image as ImageIcon, Upload } from 'lucide-react';
 
 interface ProductFormProps {
   productId: number | null;
   onClose: () => void;
 }
 
+const API_ORIGIN = (api.defaults.baseURL || '').replace(/\/api\/?$/, '');
+
 export const ProductForm = ({ productId, onClose }: ProductFormProps) => {
   const isEditing = !!productId;
   const queryClient = useQueryClient();
 
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset, watch, setValue } = useForm();
+  const selectedCategorias: number[] = watch('categorias') || [];
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const { onChange: onImagenChange, ...imagenRegister } = register('imagen');
+
+  const toggleCategoria = (id: number) => {
+    const next = selectedCategorias.includes(id)
+      ? selectedCategorias.filter((c) => c !== id)
+      : [...selectedCategorias, id];
+    setValue('categorias', next);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onImagenChange(e);
+    const file = e.target.files?.[0];
+    if (file) setPreviewUrl(URL.createObjectURL(file));
+  };
 
   // Load product if editing
   const { data: product, isLoading: isLoadingProduct } = useQuery({
@@ -50,13 +68,19 @@ export const ProductForm = ({ productId, onClose }: ProductFormProps) => {
         categorias: product.categorias?.map((c: any) => c.Id) || []
       };
       reset(productWithCategorias);
+      if (product.imagen) {
+        setPreviewUrl(`${API_ORIGIN}/uploads/productos/${product.imagen}`);
+      }
     }
   }, [product, reset]);
 
   const mutation = useMutation({
-    mutationFn: (data: any) => {
-      if (isEditing) return api.put(`/productos/${productId}`, data);
-      return api.post('/productos', data);
+    mutationFn: (formData: FormData) => {
+      if (isEditing) {
+        formData.append('_method', 'PUT');
+        return api.post(`/productos/${productId}`, formData);
+      }
+      return api.post('/productos', formData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['productos'] });
@@ -65,7 +89,20 @@ export const ProductForm = ({ productId, onClose }: ProductFormProps) => {
   });
 
   const onSubmit = (data: any) => {
-    mutation.mutate(data);
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === 'imagen') {
+        const file = (value as FileList)?.[0];
+        if (file) formData.append('imagen', file);
+        return;
+      }
+      if (key === 'categorias') {
+        ((value as number[]) || []).forEach((catId) => formData.append('categorias[]', String(catId)));
+        return;
+      }
+      formData.append(key, (value as string) ?? '');
+    });
+    mutation.mutate(formData);
   };
 
   return (
@@ -100,6 +137,30 @@ export const ProductForm = ({ productId, onClose }: ProductFormProps) => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
                   <textarea {...register('Descripcion')} className="input-field" rows={3}></textarea>
                 </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Imagen</label>
+                  <div className="flex items-center gap-4">
+                    <div className="h-20 w-20 rounded-lg border border-gray-300 bg-gray-50 flex items-center justify-center overflow-hidden shrink-0">
+                      {previewUrl ? (
+                        <img src={previewUrl} alt="Vista previa" className="h-full w-full object-cover" />
+                      ) : (
+                        <ImageIcon className="h-8 w-8 text-gray-300" />
+                      )}
+                    </div>
+                    <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                      <Upload className="h-4 w-4" />
+                      Seleccionar imagen
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        className="hidden"
+                        {...imagenRegister}
+                        onChange={handleImageChange}
+                      />
+                    </label>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">JPG, PNG o WEBP. Máximo 2 MB.</p>
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Marca *</label>
                   <select {...register('IdMarca', { required: true })} className="input-field bg-white">
@@ -111,12 +172,51 @@ export const ProductForm = ({ productId, onClose }: ProductFormProps) => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Categorías</label>
-                  <select multiple {...register('categorias')} className="input-field bg-white" style={{ minHeight: '80px' }}>
-                    {categories.map((c: any) => (
-                      <option key={c.Id} value={c.Id}>{c.Nombre}</option>
-                    ))}
-                  </select>
-                  <p className="text-xs text-gray-500 mt-1">Mantén presionado Ctrl (Windows) o Cmd (Mac) para seleccionar varias.</p>
+                  <div className="border border-gray-300 rounded-lg bg-white p-2 max-h-40 overflow-y-auto grid grid-cols-2 gap-1">
+                    {categories.map((c: any) => {
+                      const checked = selectedCategorias.includes(c.Id);
+                      return (
+                        <label
+                          key={c.Id}
+                          className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-sm cursor-pointer transition-colors ${
+                            checked ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => toggleCategoria(c.Id)}
+                            className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                          />
+                          {c.Nombre}
+                        </label>
+                      );
+                    })}
+                  </div>
+                  {selectedCategorias.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {selectedCategorias.map((id) => {
+                        const cat = categories.find((c: any) => c.Id === id);
+                        if (!cat) return null;
+                        return (
+                          <span
+                            key={id}
+                            className="inline-flex items-center gap-1 bg-primary-100 text-primary-700 text-xs font-medium pl-2 pr-1 py-1 rounded-full"
+                          >
+                            {cat.Nombre}
+                            <button
+                              type="button"
+                              onClick={() => toggleCategoria(id)}
+                              className="hover:text-primary-900 rounded-full p-0.5"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
+                  <p className="text-xs text-gray-500 mt-1">Selecciona una o varias categorías.</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Stock Mínimo</label>

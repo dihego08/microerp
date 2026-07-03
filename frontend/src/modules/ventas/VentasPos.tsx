@@ -7,6 +7,8 @@ export const VentasPos = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [cart, setCart] = useState<any[]>([]);
   const [selectedClientId, setSelectedClientId] = useState<number | ''>('');
+  const [selectedTipoDocumentoId, setSelectedTipoDocumentoId] = useState<number | ''>('');
+  const [selectedFormaPagoId, setSelectedFormaPagoId] = useState<number | ''>('');
 
   const { data: products = [], isLoading: isLoadingProducts } = useQuery({
     queryKey: ['productos'],
@@ -20,6 +22,22 @@ export const VentasPos = () => {
     queryKey: ['clientes'],
     queryFn: async () => {
       const res = await api.get('/clientes');
+      return res.data.data;
+    }
+  });
+
+  const { data: tiposDocumento = [] } = useQuery({
+    queryKey: ['tipos-documento'],
+    queryFn: async () => {
+      const res = await api.get('/tipos-documento');
+      return res.data.data;
+    }
+  });
+
+  const { data: formasPago = [] } = useQuery({
+    queryKey: ['formas-pago'],
+    queryFn: async () => {
+      const res = await api.get('/formas-pago');
       return res.data.data;
     }
   });
@@ -80,6 +98,8 @@ export const VentasPos = () => {
       alert('¡Venta registrada con éxito!');
       setCart([]);
       setSelectedClientId('');
+      setSelectedTipoDocumentoId('');
+      setSelectedFormaPagoId('');
     },
     onError: (error: any) => {
       alert('Error al registrar venta: ' + (error.response?.data?.message || error.message));
@@ -91,6 +111,14 @@ export const VentasPos = () => {
       alert('Seleccione un cliente');
       return;
     }
+    if (!selectedTipoDocumentoId) {
+      alert('Seleccione el tipo de documento');
+      return;
+    }
+    if (!selectedFormaPagoId) {
+      alert('Seleccione la forma de pago');
+      return;
+    }
     if (cart.length === 0) {
       alert('El carrito está vacío');
       return;
@@ -98,8 +126,8 @@ export const VentasPos = () => {
 
     mutation.mutate({
       IdCliente: selectedClientId,
-      IdTipoDocumento: 1, // Boleta por defecto
-      IdFormaPago: 1, // Efectivo por defecto
+      IdTipoDocumento: selectedTipoDocumentoId,
+      IdFormaPago: selectedFormaPagoId,
       Subtotal: subtotal,
       IGV: igv,
       Total: total,
@@ -162,18 +190,50 @@ export const VentasPos = () => {
           </span>
         </div>
 
-        <div className="p-4 border-b border-gray-100 bg-gray-50">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
-          <select 
-            className="input-field bg-white"
-            value={selectedClientId}
-            onChange={(e) => setSelectedClientId(Number(e.target.value))}
-          >
-            <option value="">Seleccione un cliente...</option>
-            {clients.map((c: any) => (
-              <option key={c.Id} value={c.Id}>{c.Nombres} {c.Apellidos}</option>
-            ))}
-          </select>
+        <div className="p-4 border-b border-gray-100 bg-gray-50 space-y-3">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
+            <select
+              className="input-field bg-white"
+              value={selectedClientId}
+              onChange={(e) => setSelectedClientId(Number(e.target.value))}
+            >
+              <option value="">Seleccione un cliente...</option>
+              {clients.map((c: any) => (
+                <option key={c.Id} value={c.Id}>{c.Nombres} {c.Apellidos}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tipo Documento</label>
+              <select
+                className="input-field bg-white"
+                value={selectedTipoDocumentoId}
+                onChange={(e) => setSelectedTipoDocumentoId(Number(e.target.value))}
+              >
+                <option value="">Seleccione...</option>
+                {tiposDocumento.map((t: any) => (
+                  <option key={t.Id} value={t.Id}>{t.Nombre}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Forma de Pago</label>
+              <select
+                className="input-field bg-white"
+                value={selectedFormaPagoId}
+                onChange={(e) => setSelectedFormaPagoId(Number(e.target.value))}
+              >
+                <option value="">Seleccione...</option>
+                {formasPago.map((f: any) => (
+                  <option key={f.Id} value={f.Id}>{f.Nombre}</option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50/30">
@@ -226,7 +286,7 @@ export const VentasPos = () => {
 
           <button 
             onClick={handleCheckout}
-            disabled={cart.length === 0 || mutation.isPending}
+            disabled={cart.length === 0 || !selectedClientId || !selectedTipoDocumentoId || !selectedFormaPagoId || mutation.isPending}
             className="w-full btn-primary py-4 text-lg font-bold flex justify-center items-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {mutation.isPending ? (

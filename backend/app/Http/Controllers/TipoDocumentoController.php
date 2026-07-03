@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ProductoService;
+use App\Services\TipoDocumentoService;
 use Illuminate\Http\Request;
 
-class ProductoController extends Controller
+class TipoDocumentoController extends Controller
 {
     protected $service;
 
-    public function __construct(ProductoService $service)
+    public function __construct(TipoDocumentoService $service)
     {
         $this->service = $service;
     }
@@ -28,18 +28,12 @@ class ProductoController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'imagen' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
-        ]);
         $item = $this->service->create($request->all());
         return $this->success($item, 'Creado correctamente', 201);
     }
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'imagen' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
-        ]);
         $item = $this->service->update($id, $request->all());
         if (!$item) return $this->error('No encontrado', 404);
         return $this->success($item, 'Actualizado correctamente');

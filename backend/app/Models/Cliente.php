@@ -11,11 +11,12 @@ class Cliente extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'TipoDocumento',
+        'IdTipoDocumento',
         'NumeroDocumento',
-        'Nombre',
+        'Nombres',
+        'Apellidos',
         'Direccion',
-        'Telefono',
+        'Celular',
         'Correo',
         'FechaCreacion',
         'UsuarioCreacion',
@@ -23,4 +24,9 @@ class Cliente extends Model
         'UsuarioModificacion',
         'Estado'
     ];
+
+    public function tipoDocumento()
+    {
+        return $this->belongsTo(TipoDocumentoPersona::class, 'IdTipoDocumento');
+    }
 }

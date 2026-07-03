@@ -1,26 +1,51 @@
 import { useState } from 'react';
+import type { LucideIcon } from 'lucide-react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  Store, 
-  LayoutDashboard, 
-  Package, 
-  Tags, 
-  Users, 
-  ShoppingCart, 
-  ArrowRightLeft, 
+import {
+  Store,
+  LayoutDashboard,
+  Package,
+  Tags,
+  Users,
+  ShoppingCart,
+  ArrowRightLeft,
   LogOut,
   Menu,
-  ClipboardList
+  ClipboardList,
+  Settings,
+  ChevronDown
 } from 'lucide-react';
 import { useAuth } from '../store/useAuth';
 import api from '../services/api';
 
-const menuItems = [
+interface MenuLink {
+  path: string;
+  icon: LucideIcon;
+  label: string;
+}
+
+interface MenuGroup {
+  label: string;
+  icon: LucideIcon;
+  children: MenuLink[];
+}
+
+type MenuEntry = MenuLink | MenuGroup;
+
+const isMenuGroup = (item: MenuEntry): item is MenuGroup => 'children' in item;
+
+const menuItems: MenuEntry[] = [
   { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
-  { path: '/productos', icon: Package, label: 'Productos' },
-  { path: '/categorias', icon: Tags, label: 'Categorías' },
-  { path: '/marcas', icon: Tags, label: 'Marcas' },
-  { path: '/clientes', icon: Users, label: 'Clientes' },
+  {
+    label: 'Administración',
+    icon: Settings,
+    children: [
+      { path: '/productos', icon: Package, label: 'Productos' },
+      { path: '/categorias', icon: Tags, label: 'Categorías' },
+      { path: '/marcas', icon: Tags, label: 'Marcas' },
+      { path: '/clientes', icon: Users, label: 'Clientes' },
+    ],
+  },
   { path: '/ventas', icon: ShoppingCart, label: 'Ventas' },
   { path: '/compras', icon: ArrowRightLeft, label: 'Compras' },
   { path: '/kardex', icon: ClipboardList, label: 'Kardex' },
@@ -31,6 +56,19 @@ export const MainLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+
+  const [openGroups, setOpenGroups] = useState<string[]>(() =>
+    menuItems
+      .filter(isMenuGroup)
+      .filter((group) => group.children.some((child) => child.path === location.pathname))
+      .map((group) => group.label)
+  );
+
+  const toggleGroup = (label: string) => {
+    setOpenGroups((prev) =>
+      prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label]
+    );
+  };
 
   const handleLogout = async () => {
     try {
@@ -66,9 +104,60 @@ export const MainLayout = () => {
 
         <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto">
           {menuItems.map((item) => {
+            if (isMenuGroup(item)) {
+              const GroupIcon = item.icon;
+              const isOpen = openGroups.includes(item.label);
+              const isChildActive = item.children.some((child) => location.pathname === child.path);
+
+              return (
+                <div key={item.label}>
+                  <button
+                    type="button"
+                    onClick={() => toggleGroup(item.label)}
+                    className={`
+                      w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 group
+                      ${isChildActive
+                        ? 'bg-gray-800 text-white'
+                        : 'text-gray-300 hover:bg-gray-800 hover:text-white'}
+                    `}
+                  >
+                    <GroupIcon className="h-5 w-5 mr-3 transition-transform group-hover:scale-110" />
+                    <span className="font-medium flex-1 text-left">{item.label}</span>
+                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {isOpen && (
+                    <div className="mt-1 ml-4 pl-4 border-l border-gray-700 space-y-1">
+                      {item.children.map((child) => {
+                        const ChildIcon = child.icon;
+                        const isActive = location.pathname === child.path;
+
+                        return (
+                          <Link
+                            key={child.path}
+                            to={child.path}
+                            onClick={() => setIsSidebarOpen(false)}
+                            className={`
+                              flex items-center px-3 py-2 rounded-lg text-sm transition-all duration-200 group
+                              ${isActive
+                                ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
+                                : 'text-gray-400 hover:bg-gray-800 hover:text-white'}
+                            `}
+                          >
+                            <ChildIcon className={`h-4 w-4 mr-2 transition-transform ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
+                            {child.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
-            
+
             return (
               <Link
                 key={item.path}
@@ -76,8 +165,8 @@ export const MainLayout = () => {
                 onClick={() => setIsSidebarOpen(false)}
                 className={`
                   flex items-center px-4 py-3 rounded-xl transition-all duration-200 group
-                  ${isActive 
-                    ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20' 
+                  ${isActive
+                    ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
                     : 'text-gray-300 hover:bg-gray-800 hover:text-white'}
                 `}
               >

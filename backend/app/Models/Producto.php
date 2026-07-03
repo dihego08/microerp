@@ -15,6 +15,7 @@ class Producto extends Model
         'CodigoBarras',
         'Nombre',
         'Descripcion',
+        'imagen',
         'IdMarca',
         'PrecioCompra',
         'PrecioVenta',

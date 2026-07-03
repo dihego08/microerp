@@ -18,6 +18,14 @@ export const ClienteForm = ({ itemId, onClose }: { itemId: number | null, onClos
     enabled: isEditing
   });
 
+  const { data: tiposDocumento = [] } = useQuery({
+    queryKey: ['tipos-documento-persona'],
+    queryFn: async () => {
+      const res = await api.get('/tipos-documento-persona');
+      return res.data.data;
+    }
+  });
+
   useEffect(() => {
     if (item) reset(item);
   }, [item, reset]);
@@ -69,7 +77,12 @@ export const ClienteForm = ({ itemId, onClose }: { itemId: number | null, onClos
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Tipo Documento *</label>
-                  <input type="number" {...register('IdTipoDocumento', { required: true })} className="input-field" />
+                  <select {...register('IdTipoDocumento', { required: true })} className="input-field bg-white">
+                    <option value="">Seleccione...</option>
+                    {tiposDocumento.map((t: any) => (
+                      <option key={t.Id} value={t.Id}>{t.Nombre}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">N° Documento *</label>
