@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Store, 
@@ -10,8 +10,7 @@ import {
   ArrowRightLeft, 
   LogOut,
   Menu,
-  ClipboardList,
-  X
+  ClipboardList
 } from 'lucide-react';
 import { useAuth } from '../store/useAuth';
 import api from '../services/api';

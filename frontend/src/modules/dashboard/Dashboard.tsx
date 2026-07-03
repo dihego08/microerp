@@ -1,4 +1,3 @@
-import React from 'react';
 import { TrendingUp, ShoppingBag, Users, DollarSign } from 'lucide-react';
 
 const StatCard = ({ title, value, icon: Icon, trend, colorClass }: any) => (

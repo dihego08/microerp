@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import api from '../../services/api';
 import { Search, ShoppingCart, Plus, Minus, Trash2, CheckCircle, Loader2 } from 'lucide-react';

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../services/api';
@@ -13,7 +13,7 @@ export const ProductForm = ({ productId, onClose }: ProductFormProps) => {
   const isEditing = !!productId;
   const queryClient = useQueryClient();
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const { register, handleSubmit, reset } = useForm();
 
   // Load product if editing
   const { data: product, isLoading: isLoadingProduct } = useQuery({
