@@ -20,6 +20,7 @@ class Producto extends Model
         'PrecioCompra',
         'PrecioVenta',
         'StockMinimo',
+        'StockActual',
         'FechaCreacion',
         'UsuarioCreacion',
         'FechaModificacion',

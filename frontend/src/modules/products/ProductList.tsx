@@ -81,6 +81,7 @@ export const ProductList = () => {
                 <th className="px-6 py-4">Código</th>
                 <th className="px-6 py-4">Nombre</th>
                 <th className="px-6 py-4">Precio Venta</th>
+                <th className="px-6 py-4">Stock Actual</th>
                 <th className="px-6 py-4">Stock Mínimo</th>
                 <th className="px-6 py-4 text-right">Acciones</th>
               </tr>
@@ -88,11 +89,11 @@ export const ProductList = () => {
             <tbody className="divide-y divide-gray-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-10 text-gray-500">Cargando productos...</td>
+                  <td colSpan={6} className="text-center py-10 text-gray-500">Cargando productos...</td>
                 </tr>
               ) : filteredProducts.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-10 text-gray-500">No se encontraron productos.</td>
+                  <td colSpan={6} className="text-center py-10 text-gray-500">No se encontraron productos.</td>
                 </tr>
               ) : (
                 filteredProducts.map((p: any) => (
@@ -100,6 +101,9 @@ export const ProductList = () => {
                     <td className="px-6 py-4 text-gray-600 font-medium">{p.Codigo || '-'}</td>
                     <td className="px-6 py-4 text-gray-900 font-semibold">{p.Nombre}</td>
                     <td className="px-6 py-4 text-green-600 font-semibold">S/ {Number(p.PrecioVenta).toFixed(2)}</td>
+                    <td className={`px-6 py-4 font-semibold ${Number(p.StockActual) <= Number(p.StockMinimo) ? 'text-red-500' : 'text-gray-700'}`}>
+                      {p.StockActual}
+                    </td>
                     <td className="px-6 py-4 text-gray-600">{p.StockMinimo}</td>
                     <td className="px-6 py-4 text-right space-x-3">
                       <button onClick={() => handleEdit(p.Id)} className="text-blue-600 hover:text-blue-800 transition-colors">

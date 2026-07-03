@@ -112,7 +112,7 @@ export const NuevaCompra = () => {
                   className="card p-4 cursor-pointer hover:border-blue-500 hover:shadow-md hover:ring-1 hover:ring-blue-500 transition-all group"
                 >
                   <h4 className="font-semibold text-gray-900 text-sm line-clamp-2">{p.Nombre}</h4>
-                  <p className="text-gray-500 text-xs mt-1">Stock Actual: {p.StockMinimo} (Referencial)</p>
+                  <p className="text-gray-500 text-xs mt-1">Stock Actual: {p.StockActual}</p>
                   <p className="text-sm font-bold text-blue-600 mt-2">Costo: S/ {Number(p.PrecioCompra).toFixed(2)}</p>
                 </div>
               ))}

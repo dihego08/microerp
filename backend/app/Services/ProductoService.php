@@ -42,6 +42,9 @@ class ProductoService
 
     public function create(array $data)
     {
+        // El stock solo se mueve mediante compras/ventas y su registro en el Kardex,
+        // nunca directamente desde el formulario de producto.
+        unset($data['StockActual']);
         if (isset($data['password'])) { $data['PasswordHash'] = Hash::make($data['password']); }
         if (isset($data['imagen']) && $data['imagen'] instanceof UploadedFile) {
             $data['imagen'] = $this->storeImagen($data['imagen']);
@@ -69,6 +72,7 @@ class ProductoService
     {
         $item = Producto::find($id);
         if ($item) {
+            unset($data['StockActual']);
             if (isset($data['password'])) { $data['PasswordHash'] = Hash::make($data['password']); }
             if (isset($data['imagen']) && $data['imagen'] instanceof UploadedFile) {
                 $data['imagen'] = $this->storeImagen($data['imagen'], $item->imagen);

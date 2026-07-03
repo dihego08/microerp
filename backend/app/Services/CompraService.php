@@ -60,6 +60,9 @@ class CompraService
                     'UsuarioCreacion' => $userId,
                     'Estado' => 1
                 ]);
+
+                $producto->StockActual = $nuevoStock;
+                $producto->save();
             }
 
             return $cabecera;

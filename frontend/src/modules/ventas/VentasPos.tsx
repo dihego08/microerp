@@ -48,14 +48,23 @@ export const VentasPos = () => {
   );
 
   const addToCart = (product: any) => {
+    const stockDisponible = Number(product.StockActual);
     setCart((prev) => {
       const existing = prev.find((item) => item.IdProducto === product.Id);
       if (existing) {
-        return prev.map((item) => 
-          item.IdProducto === product.Id 
+        if (existing.Cantidad + 1 > stockDisponible) {
+          alert(`Stock insuficiente. Disponible: ${stockDisponible}`);
+          return prev;
+        }
+        return prev.map((item) =>
+          item.IdProducto === product.Id
             ? { ...item, Cantidad: item.Cantidad + 1, Total: (item.Cantidad + 1) * item.PrecioUnitario }
             : item
         );
+      }
+      if (stockDisponible < 1) {
+        alert('Producto sin stock disponible');
+        return prev;
       }
       return [...prev, {
         IdProducto: product.Id,
@@ -70,7 +79,9 @@ export const VentasPos = () => {
   const updateQuantity = (productId: number, delta: number) => {
     setCart((prev) => prev.map(item => {
       if (item.IdProducto === productId) {
-        const newQty = Math.max(1, item.Cantidad + delta);
+        const product = products.find((p: any) => p.Id === productId);
+        const stockDisponible = product ? Number(product.StockActual) : Infinity;
+        const newQty = Math.min(Math.max(1, item.Cantidad + delta), stockDisponible);
         return { ...item, Cantidad: newQty, Total: newQty * item.PrecioUnitario };
       }
       return item;
@@ -169,7 +180,9 @@ export const VentasPos = () => {
                     <ShoppingCart className="h-8 w-8 text-gray-300 group-hover:text-primary-400 transition-colors" />
                   </div>
                   <h4 className="font-semibold text-gray-900 text-sm line-clamp-2">{p.Nombre}</h4>
-                  <p className="text-gray-500 text-xs mt-1">Stock: {p.StockMinimo}</p>
+                  <p className={`text-xs mt-1 ${Number(p.StockActual) <= 0 ? 'text-red-500 font-semibold' : 'text-gray-500'}`}>
+                    Stock: {p.StockActual}
+                  </p>
                   <p className="text-lg font-bold text-primary-600 mt-2">S/ {Number(p.PrecioVenta).toFixed(2)}</p>
                 </div>
               ))}

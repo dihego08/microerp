@@ -70,9 +70,8 @@ class VentaService
                     'Estado' => 1
                 ]);
 
-                // Nota: El modelo Producto original no tiene campo StockActual.
-                // Debemos asumir que el Kardex maneja el inventario o añadir el campo.
-                // Para el ejercicio usaremos un Query builder si es necesario o ignorarlo.
+                $producto->StockActual = $nuevoStock;
+                $producto->save();
             }
 
             return $cabecera;
