@@ -44,10 +44,25 @@ const menuItems: MenuEntry[] = [
       { path: '/categorias', icon: Tags, label: 'Categorías' },
       { path: '/marcas', icon: Tags, label: 'Marcas' },
       { path: '/clientes', icon: Users, label: 'Clientes' },
+      { path: '/usuarios', icon: Users, label: 'Usuarios' },
     ],
   },
-  { path: '/ventas', icon: ShoppingCart, label: 'Ventas' },
-  { path: '/compras', icon: ArrowRightLeft, label: 'Compras' },
+  {
+    label: 'Ventas',
+    icon: ShoppingCart,
+    children: [
+      { path: '/ventas/nueva', icon: ShoppingCart, label: 'Nueva Venta' },
+      { path: '/ventas/lista', icon: ClipboardList, label: 'Lista de Ventas' },
+    ],
+  },
+  {
+    label: 'Compras',
+    icon: ArrowRightLeft,
+    children: [
+      { path: '/compras/nueva', icon: ArrowRightLeft, label: 'Nueva Compra' },
+      { path: '/compras/lista', icon: ClipboardList, label: 'Lista de Compras' },
+    ],
+  },
   { path: '/kardex', icon: ClipboardList, label: 'Kardex' },
 ];
 

@@ -4,6 +4,8 @@ import api from '../../services/api';
 import { Plus, Search, Edit2, Trash2, Package } from 'lucide-react';
 import { ProductForm } from './ProductForm';
 
+const API_ORIGIN = (api.defaults.baseURL || '').replace(/\/api\/?$/, '');
+
 export const ProductList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -78,6 +80,7 @@ export const ProductList = () => {
           <table className="w-full text-left text-sm">
             <thead className="bg-gray-50 text-gray-600 font-semibold border-b border-gray-200">
               <tr>
+                <th className="px-6 py-4">Imagen</th>
                 <th className="px-6 py-4">Código</th>
                 <th className="px-6 py-4">Nombre</th>
                 <th className="px-6 py-4">Precio Venta</th>
@@ -98,6 +101,15 @@ export const ProductList = () => {
               ) : (
                 filteredProducts.map((p: any) => (
                   <tr key={p.Id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4">
+                      {p.imagen ? (
+                        <img src={`${API_ORIGIN}/uploads/productos/${p.imagen}`} alt={p.Nombre} className="h-10 w-10 rounded-md object-cover border border-gray-200 shadow-sm" />
+                      ) : (
+                        <div className="h-10 w-10 rounded-md bg-gray-50 border border-gray-200 flex items-center justify-center">
+                          <Package className="h-5 w-5 text-gray-300" />
+                        </div>
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-gray-600 font-medium">{p.Codigo || '-'}</td>
                     <td className="px-6 py-4 text-gray-900 font-semibold">{p.Nombre}</td>
                     <td className="px-6 py-4 text-green-600 font-semibold">S/ {Number(p.PrecioVenta).toFixed(2)}</td>

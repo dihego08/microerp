@@ -76,11 +76,12 @@ export const ProductForm = ({ productId, onClose }: ProductFormProps) => {
 
   const mutation = useMutation({
     mutationFn: (formData: FormData) => {
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
       if (isEditing) {
         formData.append('_method', 'PUT');
-        return api.post(`/productos/${productId}`, formData);
+        return api.post(`/productos/${productId}`, formData, config);
       }
-      return api.post('/productos', formData);
+      return api.post('/productos', formData, config);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['productos'] });

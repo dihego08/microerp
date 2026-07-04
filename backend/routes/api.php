@@ -29,7 +29,9 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('formas-pago', FormaPagoController::class);
     Route::apiResource('productos', ProductoController::class);
     Route::apiResource('usuarios', UsuarioController::class);
+    Route::get('ventas', [VentaController::class, 'index']);
     Route::post('ventas', [VentaController::class, 'store']);
+    Route::get('compras', [CompraController::class, 'index']);
     Route::post('compras', [CompraController::class, 'store']);
     Route::get('kardex', [KardexController::class, 'index']);
 });

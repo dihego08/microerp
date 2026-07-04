@@ -3,6 +3,8 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import api from '../../services/api';
 import { Search, ShoppingCart, Plus, Minus, Trash2, CheckCircle, Loader2 } from 'lucide-react';
 
+const API_ORIGIN = (api.defaults.baseURL || '').replace(/\/api\/?$/, '');
+
 export const VentasPos = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [cart, setCart] = useState<any[]>([]);
@@ -176,8 +178,12 @@ export const VentasPos = () => {
                   onClick={() => addToCart(p)}
                   className="card p-4 cursor-pointer hover:border-primary-500 hover:shadow-md hover:ring-1 hover:ring-primary-500 transition-all group"
                 >
-                  <div className="aspect-square bg-gray-50 rounded-lg mb-3 flex items-center justify-center">
-                    <ShoppingCart className="h-8 w-8 text-gray-300 group-hover:text-primary-400 transition-colors" />
+                  <div className="aspect-square bg-gray-50 rounded-lg mb-3 flex items-center justify-center overflow-hidden relative">
+                    {p.imagen ? (
+                      <img src={`${API_ORIGIN}/uploads/productos/${p.imagen}`} alt={p.Nombre} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    ) : (
+                      <ShoppingCart className="h-8 w-8 text-gray-300 group-hover:text-primary-400 transition-colors" />
+                    )}
                   </div>
                   <h4 className="font-semibold text-gray-900 text-sm line-clamp-2">{p.Nombre}</h4>
                   <p className={`text-xs mt-1 ${Number(p.StockActual) <= 0 ? 'text-red-500 font-semibold' : 'text-gray-500'}`}>

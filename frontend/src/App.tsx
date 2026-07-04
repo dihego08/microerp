@@ -7,9 +7,12 @@ import { ProductList } from './modules/products/ProductList';
 import { VentasPos } from './modules/ventas/VentasPos';
 import { NuevaCompra } from './modules/compras/NuevaCompra';
 import { KardexReport } from './modules/kardex/KardexReport';
+import { VentaList } from './modules/ventas/VentaList';
+import { CompraList } from './modules/compras/CompraList';
 import { ClienteList } from './modules/clientes/ClienteList';
 import { CategoriaList } from './modules/categorias/CategoriaList';
 import { MarcaList } from './modules/marcas/MarcaList';
+import { UsuarioList } from './modules/usuarios/UsuarioList';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient({
@@ -35,8 +38,14 @@ function App() {
             <Route path="/categorias" element={<CategoriaList />} />
             <Route path="/marcas" element={<MarcaList />} />
             <Route path="/clientes" element={<ClienteList />} />
-            <Route path="/ventas" element={<VentasPos />} />
-            <Route path="/compras" element={<NuevaCompra />} />
+            <Route path="/usuarios" element={<UsuarioList />} />
+            
+            <Route path="/ventas/nueva" element={<VentasPos />} />
+            <Route path="/ventas/lista" element={<VentaList />} />
+            
+            <Route path="/compras/nueva" element={<NuevaCompra />} />
+            <Route path="/compras/lista" element={<CompraList />} />
+            
             <Route path="/kardex" element={<KardexReport />} />
           </Route>
         </Route>

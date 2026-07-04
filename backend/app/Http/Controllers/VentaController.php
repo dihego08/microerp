@@ -23,4 +23,10 @@ class VentaController extends Controller
             return $this->error($e->getMessage(), 400);
         }
     }
+
+    public function index()
+    {
+        $items = \App\Models\VentaCabecera::orderBy('Id', 'desc')->get();
+        return $this->success($items);
+    }
 }

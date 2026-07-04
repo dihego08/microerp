@@ -23,4 +23,10 @@ class CompraController extends Controller
             return $this->error($e->getMessage(), 400);
         }
     }
+
+    public function index()
+    {
+        $items = \App\Models\CompraCabecera::orderBy('Id', 'desc')->get();
+        return $this->success($items);
+    }
 }
