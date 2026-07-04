@@ -21,4 +21,9 @@ class CompraCabecera extends Model
         'UsuarioModificacion',
         'Estado'
     ];
+
+    public function detalles()
+    {
+        return $this->hasMany(CompraDetalle::class, 'IdCompraCabecera');
+    }
 }

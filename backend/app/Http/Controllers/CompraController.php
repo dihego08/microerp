@@ -29,4 +29,11 @@ class CompraController extends Controller
         $items = \App\Models\CompraCabecera::orderBy('Id', 'desc')->get();
         return $this->success($items);
     }
+
+    public function show($id)
+    {
+        $item = \App\Models\CompraCabecera::with(['detalles.producto'])->find($id);
+        if (!$item) return $this->error('No encontrado', 404);
+        return $this->success($item);
+    }
 }

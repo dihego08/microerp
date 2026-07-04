@@ -26,4 +26,9 @@ class VentaCabecera extends Model
         'UsuarioModificacion',
         'Estado'
     ];
+
+    public function detalles()
+    {
+        return $this->hasMany(VentaDetalle::class, 'IdVentaCabecera');
+    }
 }

@@ -30,8 +30,11 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('productos', ProductoController::class);
     Route::apiResource('usuarios', UsuarioController::class);
     Route::get('ventas', [VentaController::class, 'index']);
+    Route::get('ventas/{id}', [VentaController::class, 'show']);
     Route::post('ventas', [VentaController::class, 'store']);
+    
     Route::get('compras', [CompraController::class, 'index']);
+    Route::get('compras/{id}', [CompraController::class, 'show']);
     Route::post('compras', [CompraController::class, 'store']);
     Route::get('kardex', [KardexController::class, 'index']);
 });

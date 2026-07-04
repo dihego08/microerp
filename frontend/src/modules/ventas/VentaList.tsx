@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../services/api';
-import { Search, ShoppingCart } from 'lucide-react';
+import { Search, ShoppingCart, Eye } from 'lucide-react';
+import { VentaDetailModal } from './VentaDetailModal';
 
 export const VentaList = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedVentaId, setSelectedVentaId] = useState<number | null>(null);
 
   const { data: ventas = [], isLoading } = useQuery({
     queryKey: ['ventas'],
@@ -52,6 +54,7 @@ export const VentaList = () => {
                 <th className="px-6 py-4">Fecha</th>
                 <th className="px-6 py-4">Total</th>
                 <th className="px-6 py-4">Estado</th>
+                <th className="px-6 py-4 text-right">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -76,6 +79,11 @@ export const VentaList = () => {
                         {v.Estado === 1 ? 'Completada' : 'Anulada'}
                       </span>
                     </td>
+                    <td className="px-6 py-4 text-right space-x-3">
+                      <button onClick={() => setSelectedVentaId(v.Id)} className="text-blue-600 hover:text-blue-800 transition-colors" title="Ver Detalle">
+                        <Eye className="h-5 w-5 inline" />
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
@@ -83,6 +91,13 @@ export const VentaList = () => {
           </table>
         </div>
       </div>
+
+      {selectedVentaId && (
+        <VentaDetailModal 
+          ventaId={selectedVentaId} 
+          onClose={() => setSelectedVentaId(null)} 
+        />
+      )}
     </div>
   );
 };

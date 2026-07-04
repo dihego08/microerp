@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../services/api';
-import { Search, ArrowRightLeft } from 'lucide-react';
+import { Search, ArrowRightLeft, Eye } from 'lucide-react';
+import { CompraDetailModal } from './CompraDetailModal';
 
 export const CompraList = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCompraId, setSelectedCompraId] = useState<number | null>(null);
 
   const { data: compras = [], isLoading } = useQuery({
     queryKey: ['compras'],
@@ -53,6 +55,7 @@ export const CompraList = () => {
                 <th className="px-6 py-4">Total</th>
                 <th className="px-6 py-4">Observación</th>
                 <th className="px-6 py-4">Estado</th>
+                <th className="px-6 py-4 text-right">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -78,6 +81,11 @@ export const CompraList = () => {
                         {c.Estado === 1 ? 'Completada' : 'Anulada'}
                       </span>
                     </td>
+                    <td className="px-6 py-4 text-right space-x-3">
+                      <button onClick={() => setSelectedCompraId(c.Id)} className="text-blue-600 hover:text-blue-800 transition-colors" title="Ver Detalle">
+                        <Eye className="h-5 w-5 inline" />
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
@@ -85,6 +93,13 @@ export const CompraList = () => {
           </table>
         </div>
       </div>
+
+      {selectedCompraId && (
+        <CompraDetailModal 
+          compraId={selectedCompraId} 
+          onClose={() => setSelectedCompraId(null)} 
+        />
+      )}
     </div>
   );
 };

@@ -22,4 +22,9 @@ class CompraDetalle extends Model
         'UsuarioModificacion',
         'Estado'
     ];
+
+    public function producto()
+    {
+        return $this->belongsTo(Producto::class, 'IdProducto');
+    }
 }
