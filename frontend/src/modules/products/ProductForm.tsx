@@ -134,6 +134,10 @@ export const ProductForm = ({ productId, onClose }: ProductFormProps) => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Código</label>
                   <input {...register('Codigo')} className="input-field" />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Código de Barras</label>
+                  <input {...register('CodigoBarras')} className="input-field" />
+                </div>
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
                   <textarea {...register('Descripcion')} className="input-field" rows={3}></textarea>

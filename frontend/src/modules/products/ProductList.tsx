@@ -43,7 +43,8 @@ export const ProductList = () => {
 
   const filteredProducts = products.filter((p: any) => 
     p.Nombre.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    (p.Codigo && p.Codigo.toLowerCase().includes(searchTerm.toLowerCase()))
+    (p.Codigo && p.Codigo.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (p.CodigoBarras && p.CodigoBarras.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (

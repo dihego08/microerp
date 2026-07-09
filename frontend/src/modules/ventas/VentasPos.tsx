@@ -46,7 +46,8 @@ export const VentasPos = () => {
 
   const filteredProducts = products.filter((p: any) => 
     p.Nombre.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    (p.Codigo && p.Codigo.toLowerCase().includes(searchTerm.toLowerCase()))
+    (p.Codigo && p.Codigo.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (p.CodigoBarras && p.CodigoBarras.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const addToCart = (product: any) => {
@@ -161,6 +162,15 @@ export const VentasPos = () => {
               className="input-field pl-10"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  if (filteredProducts.length === 1) {
+                    addToCart(filteredProducts[0]);
+                    setSearchTerm('');
+                  }
+                }
+              }}
             />
           </div>
         </div>
